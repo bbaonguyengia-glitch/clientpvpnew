@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baorclient | Official Website</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Teko:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #05070f;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* HIỆU ỨNG TUYẾT RƠI NỀN */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* THANH MENU */
+        header {
+            background: rgba(10, 12, 22, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-text {
+            font-family: 'Teko', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* NÚT GOOGLE SIGN-IN MỚI */
+        .google-btn {
+            padding: 10px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            background: #0d111a;
+            border-radius: 8px;
+            border: 1px solid rgba(234, 67, 53, 0.4); /* Đổi sang tông màu đỏ Google */
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .google-btn:hover {
+            box-shadow: 0 0 15px rgba(234, 67, 53, 0.5);
+            border-color: rgba(234, 67, 53, 0.8);
+            transform: translateY(-2px);
+        }
+
+        /* PHẦN LAYOUT CHÍNH */
+        main {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px 20px;
+            flex-grow: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* CỘT TRÁI: THÔNG TIN CLIENT & DOWNLOAD */
+        .client-info {
+            text-align: left;
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .badge-announcement {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .client-title {
+            font-family: 'Teko', sans-serif;
+            font-size: 90px;
+            line-height: 80px;
+            font-weight: 700;
+            background: linear-gradient(to bottom, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 35px;
+        }
+
+        .subtitle span {
+            color: #00f0ff;
+        }
+
+        .download-container {
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, #00f0ff, #0072ff);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.25);
+        }
+
+        .btn-main:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.4);
+        }
+
+        /* CỘT PHẢI: CARD PROFILE TIERS */
+        .profile-card {
+            background-color: #111625;
+            border: 1px solid #1e2638;
+            border-radius: 20px;
+            width: 380px;
+            padding: 30px 24px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .skin-avatar {
+            width: 110px;
+            height: 160px;
+            margin: 0 auto 15px auto;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0, 240, 255, 0.3));
+        }
+
+        .player-name {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .combat-badge {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .region-tag {
+            background-color: #a855f7;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .guns-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 30px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .guns-link:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .section-title {
+            text-align: left;
+            font-size: 10px;
+            color: #4e5d78;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .rank-box {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid #1a2336;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .rank-num {
+            font-size: 20px;
+            font-weight: 800;
+            font-style: italic;
+        }
+
+        .rank-text {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .rank-text span {
+            color: #4e5d78;
+        }
+
+        .tiers-row {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid #1a2336;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .tier-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #161c2e;
+            border: 1px solid #242f47;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #4e5d78;
+        }
+
+        .tier-circle.active-lt {
+            border-color: #a855f7;
+            color: #a855f7;
+            box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+        }
+
+        .tier-circle.active-ht {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 900px) {
+            main {
+                flex-direction: column;
+                text-align: center;
+                gap: 40px;
+            }
+            .client-info {
+                text-align: center;
+            }
+        }
+    </style>
+    <!-- Nhúng thư viện API chính thức của Google để xử lý phần Đăng ký/Đăng nhập -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+    <canvas id="snowCanvas"></canvas>
+
+    <header>
+        <span class="logo-text">BAOR</span>
+        <nav>
+            <a href="#" class="active">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Leaderboard</a>
+            <a href="#">Support</a>
+        </nav>
+        <!-- Nút Xbox đã được chuyển thành nút Đăng ký Google thực sự -->
+        <button class="google-btn" id="googleSignUpBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+            </svg>
+            Google Register
+        </button>
+    </header>
+
+    <main>
+        <!-- CỘT TRÁI: THÔNG TIN CLIENT -->
+        <div class="client-info">
+            <div class="badge-announcement">🔥 1.21.11 client new</div>
+            <h1 class="client-title">BAORCLIENT</h1>
+            <p class="subtitle">Next-gen <span>Java</span> PvP Client</p>
+            
+            <div class="download-container">
+                <a href="Baorclient.jar" download="Baorclient.jar" class="btn-main">
+                    🚀 Download Standalone (JAR)
+                </a>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: CARD PROFILE TRƯNG BÀY TIER -->
+        <div class="profile-card">
+            <img class="skin-avatar" src="https://minotar.net/armor/body/AlienOverdose/200.png" alt="GB_bAOR Skin">
+            
+            <h2 class="player-name">GB_bAOR</h2>
+            <div class="combat-badge">🛡️ Combat Novice</div>
+            <br>
+            <div class="region-tag">Asia</div>
+            <br>
+            
+            <a href="https://guns.lol/koko_ep" target="_blank" class="guns-link">
+                🔗 guns.lol/koko_ep
+            </a>
+
+            <div class="section-title">Position</div>
+            <div class="rank-box">
+                <div class="rank-num">32.</div>
+                <div class="rank-text">🏆 OVERALL <span>(10 pts)</span></div>
+            </div>
+
+            <div class="section-title">Tiers</div>
+            <div class="tiers-row">
+                <div class="tier-circle active-lt">LT3</div>
+                <div class="tier-circle active-ht">HT4</div>
+                <div class="tier-circle">-</div>
+                <div class="tier-circle">-</div>
+                <div class="tier-circle">-</div>
+                <div class="tier-circle">-</div>
+                <div class="tier-circle">-</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* ========================================================
+           ĐOẠN SCRIPT XỬ LÝ ĐĂNG KÝ TÀI KHOẢN QUA GOOGLE THỰC TẾ
+           ======================================================== */
+        window.onload = function () {
+            // Khởi tạo tiến trình Google Auth
+            google.accounts.id.initialize({
+                client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Khi bạn làm server thật, thay ID của bạn vào đây
+                callback: handleCredentialResponse
+            });
+
+            // Lắng nghe sự kiện click nút để mở Popup đăng ký
+            document.getElementById('googleSignUpBtn').addEventListener('click', () => {
+                google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        // Nếu chế độ tự động nhắc bị tắt, ép buộc mở một cửa sổ chọn tài khoản Google để đăng ký
+                        google.accounts.id.requestCode(); 
+                    }
+                });
+            });
+        };
+
+        // Hàm này sẽ chạy NGAY LẬP TỨC khi người dùng chọn tài khoản Google của họ xong
+        function handleCredentialResponse(response) {
+            if (response.credential) {
+                // Giải mã Token của Google để lấy thông tin tài khoản đăng ký
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                const user = JSON.parse(jsonPayload);
+
+                // Thông báo kết quả đăng ký thành công trên màn hình trang web
+                alert(`Đăng ký tài khoản Baorclient thành công!\nChào mừng: ${user.name}\nEmail: ${user.email}`);
+                
+                // Cập nhật giao diện sau khi đăng ký (Ví dụ đổi tên nút)
+                const btn = document.getElementById('googleSignUpBtn');
+                btn.innerHTML = `<img src="${user.picture}" style="width:18px;height:18px;border-radius:50%"> ${user.given_name}`;
+                btn.style.borderColor = "#34A853"; // Chuyển sang xanh lá cây báo thành công
+            }
+        }
+
+        /* ========================================================
+           HIỆU ỨNG TUYẾT RƠI (GIỮ NGUYÊN)
+           ======================================================== */
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const numFlakes = 50;
+        const flakes = [];
+        for (let i = 0; i < numFlakes; i++) {
+            flakes.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                r: Math.random() * 2 + 1,
+                d: Math.random() * numFlakes,
+                speed: Math.random() * 1 + 0.5
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            for (let i = 0; i < numFlakes; i++) {
+                const f = flakes[i];
+                ctx.moveTo(f.x, f.y);
+                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+            }
+            ctx.fill();
+            move();
+        }
+
+        function move() {
+            for (let i = 0; i < numFlakes; i++) {
+                const f = flakes[i];
+                f.y += f.speed;
+                f.x += Math.sin(f.d / 10) * 0.5;
+                if (f.y > height) {
+                    flakes[i] = { x: Math.random() * width, y: 0, r: f.r, d: f.d, speed: f.speed };
+                }
+            }
+        }
+        setInterval(draw, 30);
+    </script>
+</body>
+</html>
